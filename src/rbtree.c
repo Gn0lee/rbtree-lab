@@ -61,11 +61,11 @@ int *rightRotate(rbtree *t,node_t *x)
   return 0;
 }
 
-void delete_inorder(rbtree *t,node_t *p){
+void delete_post(rbtree *t,node_t *p){
   if(p==t->nil)
     return;
-  delete_inorder(t,p->left);
-  delete_inorder(t,p->right);
+  delete_post(t,p->left);
+  delete_post(t,p->right);
   free(p);
 }
 
@@ -73,7 +73,7 @@ void delete_inorder(rbtree *t,node_t *p){
 
 void delete_rbtree(rbtree *t) {
   // TODO: reclaim the tree nodes's memory
-  delete_inorder(t,t->root);
+  delete_post(t,t->root);
   free(t->nil);
   free(t);
 }
