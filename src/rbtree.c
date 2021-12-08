@@ -38,7 +38,7 @@ int leftRotate(rbtree *t,node_t *x)
   return 0;
 }
 
-int *rightRotate(rbtree *t,node_t *x)
+int rightRotate(rbtree *t,node_t *x)
 {
   node_t *y = x->left;
   x->left = y->right;
@@ -78,7 +78,7 @@ void delete_rbtree(rbtree *t) {
   free(t);
 }
 
-int *rbInsertFixup(rbtree *t,node_t *z)
+int rbInsertFixup(rbtree *t,node_t *z)
 {
   while(z->parent->color == RBTREE_RED)
   {
@@ -314,7 +314,7 @@ int rbtree_erase(rbtree *t, node_t *p) {
   return 0;
 }
 
-int inorder(node_t* x, rbtree *t, key_t *arr, int i){
+int inorder(node_t *x, const rbtree *t, key_t *arr, int i){
   if(x == t->nil)
     return i;
   i = inorder(x->left ,t,arr,i);
@@ -326,6 +326,7 @@ int inorder(node_t* x, rbtree *t, key_t *arr, int i){
 
 int rbtree_to_array(const rbtree *t, key_t *arr, const size_t n) {
   // TODO: implement to_array
-  inorder(t->root, t, arr,0);
+  const rbtree *x = t;
+  inorder(t->root, x, arr,0);
   return 0;
 }
