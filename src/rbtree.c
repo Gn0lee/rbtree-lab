@@ -1,3 +1,4 @@
+  
 #include "rbtree.h"
 
 #include <stdlib.h>
@@ -286,31 +287,59 @@ int rbDeleteFixup(rbtree *t,node_t *x){
   return 0;
 }
 
-int rbtree_erase(rbtree *t, node_t *p) {
-  // TODO: implement erase
-  node_t *y = (p->left == t->nil || p->right == t->nil) ? p : tree_successor(t,p);
-  
-  node_t *x = (y->left != t->nil) ? y->left : y->right;
-
-  x->parent = y->parent;
-
-  if(y->parent == t->nil)
-    t->root = x;
-  
-  else{
-    if(y==y->parent->left)
-      y->parent->left = x;
-    else
-      y->parent->right = x;
+void rbtree_transplant(rbtree *tree, node_t *node, node_t *adj_node)
+{
+  if (node -> parent == tree -> nil){
+    tree -> root = adj_node;
+  } 
+  else if(node == node -> parent ->left){
+    node -> parent -> left = adj_node;
+  } else{
+    node -> parent -> right = adj_node;
   }
+  adj_node -> parent = node -> parent;
+}
 
-  if(y!=p)
-    p->key = y->key;
-
-  if(y->color == RBTREE_BLACK)
-    rbDeleteFixup(t,x);
-
-  free(y);
+int rbtree_erase(rbtree *tree, node_t *node){
+  if (node == NULL) {
+    return 0;
+  }
+  node_t *to_be_deleted = node;
+  node_t *temp;
+  color_t to_be_deleted_original_color;
+  to_be_deleted_original_color = to_be_deleted -> color;
+  if (node -> left == tree -> nil){
+    temp = node -> right;
+    rbtree_transplant(tree, node, node -> right);
+  } 
+  else if (node -> right == tree -> nil){
+    temp = node -> left;
+    rbtree_transplant(tree, node, node -> left);
+  } 
+  else {
+    to_be_deleted = node -> right;
+    while(to_be_deleted -> left != tree -> nil){
+      to_be_deleted = to_be_deleted -> left;
+    }
+    to_be_deleted_original_color = to_be_deleted -> color;
+    temp = to_be_deleted -> right;
+    if(to_be_deleted -> parent == node){
+      temp -> parent = to_be_deleted;
+    } 
+    else {
+      rbtree_transplant(tree, to_be_deleted, to_be_deleted -> right);
+      to_be_deleted -> right = node -> right;
+      to_be_deleted -> right -> parent = to_be_deleted;
+    }
+    rbtree_transplant(tree, node, to_be_deleted);
+    to_be_deleted -> left = node -> left;
+    to_be_deleted -> left -> parent = to_be_deleted;
+    to_be_deleted -> color = node -> color;
+  }
+  if(to_be_deleted_original_color == RBTREE_BLACK){
+    rbDeleteFixup(tree, temp);
+  }
+  free(node);
   return 0;
 }
 //중위순회 하며 arr에 데이터 기입
