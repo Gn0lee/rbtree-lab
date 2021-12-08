@@ -14,7 +14,7 @@ rbtree *new_rbtree(void) {
 
   return p;
 }
-
+//x노드 기준으로 왼쪽 회전
 int leftRotate(rbtree *t,node_t *x)
 {
   node_t *y = x->right;
@@ -37,7 +37,7 @@ int leftRotate(rbtree *t,node_t *x)
 
   return 0;
 }
-
+//x 노드 기준으로 오른쪽 회전
 int rightRotate(rbtree *t,node_t *x)
 {
   node_t *y = x->left;
@@ -61,6 +61,7 @@ int rightRotate(rbtree *t,node_t *x)
   return 0;
 }
 
+//좌,우,루트 순으로 메모리 할당 해제
 void delete_post(rbtree *t,node_t *p){
   if(p==t->nil)
     return;
@@ -68,9 +69,7 @@ void delete_post(rbtree *t,node_t *p){
   delete_post(t,p->right);
   free(p);
 }
-
-
-
+//후위순회로 할당 해제 후 nil 및 트리 해제
 void delete_rbtree(rbtree *t) {
   // TODO: reclaim the tree nodes's memory
   delete_post(t,t->root);
@@ -207,6 +206,7 @@ node_t *rbtree_max(const rbtree *t) {
   return max_v;
 }
 
+//실제로 삭제할 계승노드 찾기
 node_t *tree_successor(rbtree *t,node_t *x){
   if (x->right != t->nil){
     node_t *y = x ->right;
@@ -313,7 +313,7 @@ int rbtree_erase(rbtree *t, node_t *p) {
   free(y);
   return 0;
 }
-
+//중위순회 하며 arr에 데이터 기입
 int inorder(node_t *x, const rbtree *t, key_t *arr, int i){
   if(x == t->nil)
     return i;
